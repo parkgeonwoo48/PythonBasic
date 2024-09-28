@@ -18,3 +18,10 @@ while True:
 print("Hello")
 
 # 숙제: for문으로 작성한 구구단 2단을 while문으로 작성해보세요.
+i = 1
+while i < 10:
+    print(f"2x{i}={2*i}")
+    i += 1
+
+    
+    
