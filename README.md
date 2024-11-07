@@ -56,7 +56,12 @@
   - 도커이미지 -> 도커 컨테이너의 설계도면
   - 도커엔진 -> 도커이미지대로 컨테이너를 만들어서 실행
 
+### 3-1 도커명령어
+  - docker ps # 현재 실행중인 
+  - docker run
 
+docker run --name mariadb -d -p 3306:3306 -e 
+MARIADB_ROOT_PASSWORD=mariadb mariadb
 
 ## 99. 전체 시스템 구조(학습용) - WEB/APP
 - Client-Server 구조
