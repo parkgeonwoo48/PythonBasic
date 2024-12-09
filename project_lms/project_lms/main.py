@@ -92,17 +92,91 @@ def main_page():
                          use_container_width=True,
                          hide_index=True
                          )
+    if len(event.selection["rows"]):
+        # 수정, 삭제에서는 사용자가 선책한 값이 필요!
+        # -> 사용자가 선택한 idx의 행(row)값이 필요!
+        selected_idx = event.selection["rows"][0]
+        book_isbn = rows.iloc[selected_idx]["book_ISBN"]
+        book_name = rows.iloc[selected_idx]["book_name"]
+        book_writer = rows.iloc[selected_idx]["book_writer"]
+        book_publisher = rows.iloc[selected_idx]["book_publisher"]
+        book_price = rows.iloc[selected_idx]["book_price"]
+        register_at = rows.iloc[selected_idx]["register_at"]
+        useyn = rows.iloc[selected_idx]["useyn"]
+        
+        data = {
+            "book_isbn" : book_isbn,
+            "book_name" : book_name,
+            "book_writer" : book_writer,
+            "book_publisher" : book_publisher,
+            "book_price" : book_price,
+            "register_at" : register_at,
+            "useyn" : useyn 
+        }
+        # data를 Update 페이지에서도 활용하기 위해
+        # 공용저장소에 저장!
+        st.session_state["data"] = data
+        
+        if st.button("수정"):
+            navigate_to("update")
+        if st.button("삭제"):
+            pass
+
+
 def insert_page():
-    pass
+    with st.form("insert_form"):
+        book_name = st.text_input("book_name")
+        book_writer = st.text_input("book_writer")
+        book_publisher = st.text_input("book_publisher")
+        book_price = st.text_input("book_price")
+        submitted = st.form_submit_button("등록")
+        
+        book = {
+            "book_name": book_name,
+            "book_writer": book_writer,
+            "book_publisher": book_publisher,
+            "book_price": book_price
+            }
+        
+        if submitted:
+            book_service.insert_book(book)
+            navigate_to("main")
+
+
 def update_page():
-    pass
+    row = st.session_state["data"]
+    
+    st.write("도서 수정")
+    # value -> 기존의 값을 입력
+    with st.form("update_form"):    
+        book_isbn = st.text_input("ISBN", value=row["book_isbn"], disabled=True)
+        book_name = st.text_input("도서명", value=row["book_name"])
+        book_writer = st.text_input("저자", value=row["book_writer"])
+        book_publisher = st.text_input("출판사", value=row["book_publisher"])
+        book_price = st.text_input("가격", value=row["book_price"])
+        register_at = st.text_input("등록일자", value=row["register_at"])
+        useyn = st.text_input("사용유무", value=row["useyn"])
+        submitted = st.form_submit_button("수정")
+        if submitted:
+            book = {
+                "book_isbn" : book_isbn,
+                "book_name" : book_name,
+                "book_writer" : book_writer,
+                "book_publisher" : book_publisher,
+                "book_price" : book_price,
+                "register_at" : register_at,
+                "useyn" : useyn
+            }
+            book_service.update_book(book)
+            navigate_to("main")
+
 
 #####################
 ## 4. PAGE CONTROL ##
 #####################
 if st.session_state["page"] == "main":
     main_page()
-if st.session_state["page"] == "insert":
+elif st.session_state["page"] == "insert":
     insert_page()
-if st.session_state["page"] == "update":
+elif st.session_state["page"] == "update":
     update_page()
